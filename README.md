@@ -15,3 +15,5 @@ Example showing strucutral MRI (grayscale) with grey matter segmentation overlai
 ![Shot](Shot.png)
 
 ![Shot2](Shot2.png)
+
+![Shot3](Shot3.png)

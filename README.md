@@ -17,3 +17,9 @@ Example showing strucutral MRI (grayscale) with grey matter segmentation overlai
 ![Shot2](Shot2.png)
 
 ![Shot3](Shot3.png)
+
+Audtory Example
+![Aud](Auditory.png)
+
+Motor Cortex Beta Desynchrony
+![Motor](MotorBeta.png)

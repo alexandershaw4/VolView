@@ -527,11 +527,11 @@ O = handles.Overlay;
 S = std(O(:));
 
 
-[idx] = find(O(:) >= (S*3));
+[idx] = find(abs(O(:)) >= (S*3));
 [ix,iy,iz] = ind2sub(size(O),idx);
 
 v     = O(idx);
-[B,I] = sort(v,'descend');
+[B,I] = sort(abs(v),'descend');
 
 np = 25;
 

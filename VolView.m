@@ -47,6 +47,31 @@ function VolView_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for VolView
 handles.output = hObject;
 
+
+% Check whether filenames or structures have been passed instead 3D double
+if ischar(varargin{1})
+    fprintf('Loading file with fieldtrip\n');
+    S = ft_read_mri(varargin{1});
+    S = ft_volumereslice([],S);
+    varargin{1} = S.anatomy;
+elseif isstruct(varargin{1}) && isfield(varargin{1},'anatomy')
+    fprintf('Input is struct: asusming ft (has .anatomy)\n');
+    S = ft_volumereslice([],varargin{1});
+    varargin{1} = S.anatomy;
+end
+if ischar(varargin{2})
+    fprintf('Loading file with fieldtrip\n');
+    S = ft_read_mri(varargin{2});
+    S = ft_volumereslice([],S);
+    varargin{2} = S.anatomy;
+elseif isstruct(varargin{2}) && isfield(varargin{2},'anatomy')
+    fprintf('Input is struct: asusming ft (has .anatomy)\n');
+    S = ft_volumereslice([],varargin{2});
+    varargin{2} = S.anatomy;
+end
+
+
+% Save volumes into handles
 Volume         = varargin{1};
 handles.Volume = Volume;
 

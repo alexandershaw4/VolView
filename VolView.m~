@@ -47,6 +47,22 @@ function VolView_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for VolView
 handles.output = hObject;
 
+% Check whether a filename or strtcture has b
+if any( size(varargin{1}) ~= size(varargin{2}) )
+    fprintf('Volume dimensions mismatch: trying fieldtrip reslice\n');
+    % try using fieldtrip reslice on both to 256.^3
+    X0 = ft_volumereslice([],varargin{1});
+    varargin{1} = X1.anatomy;
+    X1 = ft_volumereslice([],varargin{2});
+    varargin{2} = X1.anatomy;
+    
+    if any( size(varargin{1}) ~= size(varargin{2}) )
+        fprintf('Volumes are still mismatches; please fix\n');
+        return;
+    end
+end
+
+% Save volumes into handles
 Volume         = varargin{1};
 handles.Volume = Volume;
 
@@ -508,14 +524,7 @@ S = std(O(:));
 v     = O(idx);
 [B,I] = sort(v,'descend');
 
-if length(v) > 20
-    I  = I(1:20);
-    ix = ix(1:20);
-    iy = iy(1:20);
-    iz = iz(1:20);
-end
-
-np = length(v);
+np = 25;
 
 % generate a pop-up table
 %-----------------------------------
@@ -534,6 +543,12 @@ t.Data = d;
 t.ColumnName = {'Value','x','y','z'};
 t.ColumnEditable = true;
 
+table_extent = get(t,'Extent');
+set(t,'Position',[1 1 table_extent(3) table_extent(4)])
+figure_size = get(f,'outerposition');
+desired_fig_size = [figure_size(1) figure_size(2) table_extent(3)+15 table_extent(4)+65];
+set(f,'outerposition', desired_fig_size);
+
 %waitfor(f) % while the peaks box is open
 fprintf('Waiting: Click in peaks table to view peaks!\n');
 while isvalid(f)
@@ -544,15 +559,10 @@ while isvalid(f)
         if i < length(d)
             this = t.Data(i,:);
             
+            CP = [this{2} this{3} this{4}];
+            handles.CurrentView = CP;
+            handles = UpdateViews(handles);
             
-            
-        else
-            % otherwise just plot the whole lot
-            thefig = get(f0,'children');
-            hh = get(thefig(end),'children');
-            set(hh(end),'FaceVertexCData',y(:),'FaceColor','interp');
-            drawnow;
-            shading interp
         end
     end
     

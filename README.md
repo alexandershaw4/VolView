@@ -6,6 +6,7 @@ Syntax:
 > VolView(S,O)
 
 S = a 3D double, (structural image) 
+
 O = a 3D double, (the functional volume to overlay). 
 
 size(S) == size(O)

@@ -14,7 +14,7 @@ function varargout = VolView(varargin)
 
 % Edit the above text to modify the response to help VolView
 
-% Last Modified by GUIDE v2.5 17-Dec-2018 16:16:04
+% Last Modified by GUIDE v2.5 18-Dec-2018 10:19:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -51,12 +51,21 @@ Volume         = varargin{1};
 handles.Volume = Volume;
 
 Overlay         = varargin{2};
-%Overlay         = NewMeanFilt3D(Overlay,16);
 handles.Overlay = Overlay;
+handles.Orig    = Overlay;
 
 % use a constant colorbar caxis
 handles.limz = max(abs(Overlay(:)));
 handles.s    = size(Volume);
+
+% Set range for thresholding
+TR = max(abs(Overlay(:)));
+
+% set initial slider position
+set(handles.slider5, 'min',0);
+set(handles.slider5, 'max',TR);
+set(handles.slider5,'Value',0);
+
 
 % initialise viewpoints
 if ~isfield(handles,'CurrentView')
@@ -451,3 +460,164 @@ end
 
 handles = UpdateViews(handles);
 guidata(hObject, handles);
+
+
+
+function edit1_Callback(hObject, eventdata, handles)
+% hObject    handle to edit1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit1 as text
+%        str2double(get(hObject,'String')) returns contents of edit1 as a double
+Vx = get(hObject,'String');
+Vx = str2num(Vx);
+handles.CurrentView = Vx;
+handles = UpdateViews(handles);
+guidata(hObject, handles);
+
+
+
+% --- Executes during object creation, after setting all properties.
+function edit1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pushbutton1.
+function pushbutton1_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Find peaks pushbutton!
+O = handles.Overlay;
+S = std(O(:));
+
+
+[idx] = find(O(:) >= (S*3));
+[ix,iy,iz] = ind2sub(size(O),idx);
+
+v     = O(idx);
+[B,I] = sort(v,'descend');
+
+% if length(v) > 20
+%     I  = I(1:20);
+%     ix = ix(1:20);
+%     iy = iy(1:20);
+%     iz = iz(1:20);
+% end
+
+np = 20;
+
+% generate a pop-up table
+%-----------------------------------
+f0 = get(gca,'parent');
+f = figure('position',[1531         560         560         420]);
+t = uitable(f);
+for i = 1:np
+    d{i,1} = v(I(i));
+    d{i,2} = ix(I(i));
+    d{i,3} = iy(I(i));
+    d{i,4} = iz(I(i));
+    d{i,5} = false;
+end
+
+t.Data = d;
+t.ColumnName = {'Value','x','y','z'};
+t.ColumnEditable = true;
+
+table_extent = get(t,'Extent');
+set(t,'Position',[1 1 table_extent(3) table_extent(4)])
+figure_size = get(f,'outerposition');
+desired_fig_size = [figure_size(1) figure_size(2) table_extent(3)+15 table_extent(4)+65];
+set(f,'outerposition', desired_fig_size);
+
+%waitfor(f) % while the peaks box is open
+fprintf('Waiting: Click in peaks table to view peaks!\n');
+while isvalid(f)
+    
+    waitfor(t,'Data')
+    i = find(cell2mat(t.Data(:,5))); % wait for click in column 5
+    if any(i)
+        if i < length(d)
+            this = t.Data(i,:);
+            
+            CP = [this{2} this{3} this{4}];
+            handles.CurrentView = CP;
+            handles = UpdateViews(handles);
+            
+        end
+    end
+    
+end
+        
+
+
+
+
+
+
+
+
+
+
+
+% --- Executes on slider movement.
+function slider5_Callback(hObject, eventdata, handles)
+% hObject    handle to slider5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+% Overlay threshold slider!
+T = get(hObject,'Value');
+
+% backup original overlay data
+O = handles.Overlay;
+I = find(abs(O(:)) < T);
+O(I) = 0;
+handles.Overlay = O;
+handles = UpdateViews(handles);
+guidata(hObject, handles);
+
+
+
+% --- Executes during object creation, after setting all properties.
+function slider5_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on button press in radiobutton2.
+function radiobutton2_Callback(hObject, eventdata, handles)
+% hObject    handle to radiobutton2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of radiobutton2
+
+% reset threshold button - just a trigger
+handles.Overlay = handles.Orig;
+handles = UpdateViews(handles);
+set(handles.radiobutton2, 'Value',0);
+set(handles.slider5,'Value',0);
+guidata(hObject, handles);
+
+
+

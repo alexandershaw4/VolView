@@ -182,7 +182,7 @@ XO = ( flipud(xviewo') );
 % Plot the sturctural image in axes 1
 XS = mat2gray(S);
 XS = imsharpen(XS,'Radius',3,'Amount',2);
-XS = imadjust(XS);
+XS = imadjust(XS);      
 h0 = imshow(XS);% hold on;
 
 % Gen new axes over the top

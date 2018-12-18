@@ -56,6 +56,7 @@ handles.Overlay = Overlay;
 
 % use a constant colorbar caxis
 handles.limz = max(abs(Overlay(:)));
+handles.s    = size(Volume);
 
 % initialise viewpoints
 if ~isfield(handles,'CurrentView')
@@ -116,7 +117,7 @@ end
 limx = handles.limz;
 limy = handles.limz;
 limz = handles.limz;
-
+s    = handles.s;
     
 % current smoothing kernel
 try
@@ -171,8 +172,10 @@ caxis([-limx limx]);
 
 % crosshairs
 hold on;
-line([0 256],[256-curpoints(3) 256-curpoints(3)],'Color','w','linewidth',2);
-line([curpoints(2) curpoints(2)],[0 256],'Color','w','linewidth',2);
+line([0 s(3)],[s(3)-curpoints(3) s(3)-curpoints(3)],'Color','w','linewidth',2);
+line([curpoints(2) curpoints(2)],[0 s(2)],'Color','w','linewidth',2);
+%title(sprintf('x = %d y = %d, z = %d',curpoints(1),curpoints(2),s(3)-curpoints(3)));
+%hold off;
 
 handles.cb = colorbar(axb,'Position',[.5 .1 .04 .3]);% Left, Btm, Wdth, Ht
 
@@ -216,8 +219,8 @@ caxis([-limx limx]);
 
 % crosshairs
 hold on;
-line([0 256],[256-curpoints(3) 256-curpoints(3)],'Color','w','linewidth',2);
-line([curpoints(1) curpoints(1)],[0 256],'Color','w','linewidth',2);
+line([0 s(3)],[s(3)-curpoints(3) s(3)-curpoints(3)],'Color','w','linewidth',2);
+line([s(1)-curpoints(1) s(1)-curpoints(1)],[0 s(1)],'Color','w','linewidth',2);
 
 % the slider: (y)
 set(handles.slider2, 'Min', 1);
@@ -261,8 +264,8 @@ caxis([-limx limx]);
 
 % crosshairs
 hold on;
-line([0 256],[256-curpoints(2) 256-curpoints(2)],'Color','w','linewidth',2);
-line([curpoints(1) curpoints(1)],[0 256],'Color','w','linewidth',2);
+line([0 s(2)],[s(2)-curpoints(2) s(2)-curpoints(2)],'Color','w','linewidth',2);
+line([s(1)-curpoints(1) s(1)-curpoints(1)],[0 s(1)],'Color','w','linewidth',2);
 
 % the slider: (z)
 set(handles.slider3, 'Min', 1);

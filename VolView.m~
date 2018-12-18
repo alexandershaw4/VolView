@@ -56,6 +56,7 @@ handles.Overlay = Overlay;
 
 % use a constant colorbar caxis
 handles.limz = max(abs(Overlay(:)));
+handles.s    = size(Volume);
 
 % initialise viewpoints
 if ~isfield(handles,'CurrentView')
@@ -100,7 +101,6 @@ Volume    = handles.Volume;
 Overlay   = handles.Overlay;
 Q         = handles.Q;
 
-
 % current viewpoints
 xview = Q(Volume(curpoints(1),:           ,:           ));
 yview = Q(Volume(:           ,curpoints(2),:           ));
@@ -117,7 +117,7 @@ end
 limx = handles.limz;
 limy = handles.limz;
 limz = handles.limz;
-
+s    = handles.s;
     
 % current smoothing kernel
 try
@@ -142,8 +142,8 @@ end
 %-------------------------------------------------------
 axes(handles.axes1); hold off;
 
-S  = flipud(xview');
-XO = flipud(xviewo');
+S  = ( flipud(xview') );
+XO = ( flipud(xviewo') );
 
 % Plot the sturctural image in axes 1
 XS = mat2gray(S);
@@ -172,7 +172,9 @@ caxis([-limx limx]);
 
 % crosshairs
 hold on;
-line([curpoints(2),curpoints(3)],[curpoints(2),curpoints(3)])
+line([0 s(3)],[s(3)-curpoints(3) s(3)-curpoints(3)],'Color','w','linewidth',2);
+line([curpoints(2) curpoints(2)],[0 s(2)],'Color','w','linewidth',2);
+title(sprintf('
 
 handles.cb = colorbar(axb,'Position',[.5 .1 .04 .3]);% Left, Btm, Wdth, Ht
 
@@ -214,6 +216,10 @@ set(h1,'AlphaData',abs(SO));
 caxis([-limx limx]);
 caxis([-limx limx]);
 
+% crosshairs
+hold on;
+line([0 s(3)],[s(3)-curpoints(3) s(3)-curpoints(3)],'Color','w','linewidth',2);
+line([curpoints(1) curpoints(1)],[0 s(1)],'Color','w','linewidth',2);
 
 % the slider: (y)
 set(handles.slider2, 'Min', 1);
@@ -255,6 +261,11 @@ set(h1,'AlphaData',abs(SO));
 caxis([-limx limx]);
 caxis([-limx limx]);
 
+% crosshairs
+hold on;
+line([0 s(2)],[s(2)-curpoints(2) s(2)-curpoints(2)],'Color','w','linewidth',2);
+line([curpoints(1) curpoints(1)],[0 s(1)],'Color','w','linewidth',2);
+
 % the slider: (z)
 set(handles.slider3, 'Min', 1);
 set(handles.slider3, 'Max', size(Volume,3));
@@ -267,7 +278,7 @@ set(handles.slider4, 'Max', 64);
 set(handles.slider4, 'Value', handles.smooth);
 set(handles.slider4, 'SliderStep', [1/64 , 10/64 ]);
 
-set(handles.axes4,'visible',0)
+%set(handles.axes4,'visible',0)
 
 % % Axes 4: XYZ view
 % %------------------------

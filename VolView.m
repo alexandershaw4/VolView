@@ -508,14 +508,7 @@ S = std(O(:));
 v     = O(idx);
 [B,I] = sort(v,'descend');
 
-% if length(v) > 20
-%     I  = I(1:20);
-%     ix = ix(1:20);
-%     iy = iy(1:20);
-%     iz = iz(1:20);
-% end
-
-np = 20;
+np = 25;
 
 % generate a pop-up table
 %-----------------------------------

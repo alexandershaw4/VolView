@@ -181,6 +181,8 @@ XO = ( flipud(xviewo') );
 
 % Plot the sturctural image in axes 1
 XS = mat2gray(S);
+XS = imsharpen(XS,'Radius',3,'Amount',2);
+XS = imadjust(XS);
 h0 = imshow(XS);% hold on;
 
 % Gen new axes over the top
@@ -229,6 +231,8 @@ YO = fliplr(flipud(yviewo'));
 
 % Plot the sturctural image in axes 1
 YS = mat2gray(S);
+YS = imsharpen(YS,'Radius',3,'Amount',2);
+YS = imadjust(YS);
 h0 = imshow(YS);% hold on;
 
 % Gen new axes over the top
@@ -273,6 +277,8 @@ ZO = fliplr(flipud(zviewo'));
 
 % Plot the sturctural image in axes 1
 ZS = mat2gray(S);
+ZS = imsharpen(ZS,'Radius',3,'Amount',2);
+ZS = imadjust(ZS);
 h0 = imshow(ZS);  % hold on;
 
 
@@ -313,41 +319,8 @@ set(handles.slider4, 'Max', 64);
 set(handles.slider4, 'Value', handles.smooth);
 set(handles.slider4, 'SliderStep', [1/64 , 10/64 ]);
 
-%set(handles.axes4,'visible',0)
-
-% % Axes 4: XYZ view
-% %------------------------
-% axes(handles.axes4); hold off;
-% view(3)
-% 
-% cps = curpoints;
-% xlim([0 256]); ylim([0 256]); zlim([0 256]);
-% 
-% ev = Volume*0;
-% ev(cps(1),:     ,:     ) = xview;
-% ev(:     ,cps(2),:     ) = yview;
-% ev(:     ,:     ,cps(3)) = zview;
-% h4  = slice(ev,cps(1),cps(2),cps(3));  hold on;
-% 
-% ov = Overlay*0;
-% ov(cps(1),:     ,:     ) = xviewo;
-% ov(:     ,cps(2),:     ) = yviewo;
-% ov(:     ,:     ,cps(3)) = zviewo;
-% 
-% h42 = slice(ov,cps(1),cps(2),cps(3));
-% 
-% 
-% rotate3d on;
-% set(h4,'LineStyle','none')
-% set(h42,'LineStyle','none')
-
-
-
-
-
-% XS, YS, ZS
-% XO, YO, ZO
-
+% print current points [x,yz] to edit text box
+set(handles.edit1,'String',[num2str(curpoints)]);
 
 
 

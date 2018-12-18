@@ -47,20 +47,29 @@ function VolView_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for VolView
 handles.output = hObject;
 
-% Check whether a filename or strtcture has b
-if any( size(varargin{1}) ~= size(varargin{2}) )
-    fprintf('Volume dimensions mismatch: trying fieldtrip reslice\n');
-    % try using fieldtrip reslice on both to 256.^3
-    X0 = ft_volumereslice([],varargin{1});
-    varargin{1} = X1.anatomy;
-    X1 = ft_volumereslice([],varargin{2});
-    varargin{2} = X1.anatomy;
-    
-    if any( size(varargin{1}) ~= size(varargin{2}) )
-        fprintf('Volumes are still mismatches; please fix\n');
-        return;
-    end
+
+% Check whether filenames or structures have been passed instead 3D double
+if ischar(varargin{1})
+    fprintf('Loading file with fieldtrip\n');
+    S = ft_read_mri(varargin{1});
+    S = ft_volumereslice([],S);
+    varargin{1} = S.anatomy;
+elseif isstruct(varargin{1}) && isfield(varargin{1},'anatomy')
+    fprintf('Input is struct: asusming ft (has .anatomy)\n');
+    S = ft_volumereslice([],varargin{1});
+    varargin{1} = S.anatomy;
 end
+if ischar(varargin{2})
+    fprintf('Loading file with fieldtrip\n');
+    S = ft_read_mri(varargin{2});
+    S = ft_volumereslice([],S);
+    varargin{2} = S.anatomy;
+elseif isstruct(varargin{2}) && isfield(varargin{2},'anatomy')
+    fprintf('Input is struct: asusming ft (has .anatomy)\n');
+    S = ft_volumereslice([],varargin{2});
+    varargin{2} = S.anatomy;
+end
+
 
 % Save volumes into handles
 Volume         = varargin{1};
@@ -172,6 +181,8 @@ XO = ( flipud(xviewo') );
 
 % Plot the sturctural image in axes 1
 XS = mat2gray(S);
+XS = imsharpen(XS,'Radius',3,'Amount',2);
+XS = imadjust(XS);
 h0 = imshow(XS);% hold on;
 
 % Gen new axes over the top
@@ -220,6 +231,7 @@ YO = fliplr(flipud(yviewo'));
 
 % Plot the sturctural image in axes 1
 YS = mat2gray(S);
+YS = imadjust(YS);
 h0 = imshow(YS);% hold on;
 
 % Gen new axes over the top
@@ -264,6 +276,7 @@ ZO = fliplr(flipud(zviewo'));
 
 % Plot the sturctural image in axes 1
 ZS = mat2gray(S);
+ZS = imadjust(ZS);
 h0 = imshow(ZS);  % hold on;
 
 
@@ -304,41 +317,8 @@ set(handles.slider4, 'Max', 64);
 set(handles.slider4, 'Value', handles.smooth);
 set(handles.slider4, 'SliderStep', [1/64 , 10/64 ]);
 
-%set(handles.axes4,'visible',0)
-
-% % Axes 4: XYZ view
-% %------------------------
-% axes(handles.axes4); hold off;
-% view(3)
-% 
-% cps = curpoints;
-% xlim([0 256]); ylim([0 256]); zlim([0 256]);
-% 
-% ev = Volume*0;
-% ev(cps(1),:     ,:     ) = xview;
-% ev(:     ,cps(2),:     ) = yview;
-% ev(:     ,:     ,cps(3)) = zview;
-% h4  = slice(ev,cps(1),cps(2),cps(3));  hold on;
-% 
-% ov = Overlay*0;
-% ov(cps(1),:     ,:     ) = xviewo;
-% ov(:     ,cps(2),:     ) = yviewo;
-% ov(:     ,:     ,cps(3)) = zviewo;
-% 
-% h42 = slice(ov,cps(1),cps(2),cps(3));
-% 
-% 
-% rotate3d on;
-% set(h4,'LineStyle','none')
-% set(h42,'LineStyle','none')
-
-
-
-
-
-% XS, YS, ZS
-% XO, YO, ZO
-
+% print current points [x,yz] to edit text box
+set(handles.edit1,'String',[num2str(curpoints)]);
 
 
 
@@ -518,11 +498,11 @@ O = handles.Overlay;
 S = std(O(:));
 
 
-[idx] = find(O(:) >= (S*3));
+[idx] = find(abs(O(:)) >= (S*3));
 [ix,iy,iz] = ind2sub(size(O),idx);
 
 v     = O(idx);
-[B,I] = sort(v,'descend');
+[B,I] = sort(abs(v),'descend');
 
 np = 25;
 

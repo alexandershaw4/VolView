@@ -14,7 +14,8 @@ size(S) == size(O)
 Example showing strucutral MRI (grayscale) with grey matter segmentation overlaid as the 'functional' part.
 ![Shot](Shot.png)
 
-![Shot2](Shot2.png)
+Example: Peak Motor Cortex Beta Desynchrony
+![Motor](MotorBeta.png)
 
 Example: Peaks in Visual Cortex
 ![Shot3](Shot3.png)
@@ -22,5 +23,4 @@ Example: Peaks in Visual Cortex
 Example: Peaks in Audtory Cortices
 ![Aud](Auditory.png)
 
-Example: Peak Motor Cortex Beta Desynchrony
-![Motor](MotorBeta.png)
+

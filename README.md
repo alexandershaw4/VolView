@@ -11,8 +11,6 @@ O = a 3D double, (the functional volume to overlay).
 
 size(S) == size(O)
 
-Example showing strucutral MRI (grayscale) with grey matter segmentation overlaid as the 'functional' part.
-![Shot](Shot.png)
 
 Example: Peak Motor Cortex Beta Desynchrony
 ![Motor](MotorBeta.png)
@@ -22,5 +20,8 @@ Example: Peaks in Visual Cortex
 
 Example: Peaks in Audtory Cortices
 ![Aud](Auditory.png)
+
+Example showing strucutral MRI (grayscale) with grey matter segmentation overlaid as the 'functional' part.
+![Shot](Shot.png)
 
 

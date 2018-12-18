@@ -16,10 +16,11 @@ Example showing strucutral MRI (grayscale) with grey matter segmentation overlai
 
 ![Shot2](Shot2.png)
 
+Example: Peaks in Visual Cortex
 ![Shot3](Shot3.png)
 
-Audtory Example
+Example: Peaks in Audtory Cortices
 ![Aud](Auditory.png)
 
-Motor Cortex Beta Desynchrony
+Example: Peak Motor Cortex Beta Desynchrony
 ![Motor](MotorBeta.png)

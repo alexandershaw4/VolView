@@ -47,15 +47,21 @@ function VolView_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for VolView
 handles.output = hObject;
 
+% Check whether input 1 is just a flag for the default MNI MPRAGE
+if ischar(varargin{1}) && strcmp(varargin{1},'def') || isempty(varargin{1})
+   p = [fileparts(mfilename('fullpath')) '/Examp/ExampleData'];
+   p = load(p,'T1_MPRAGE_Deface');
+   varargin{1} = p.T1_MPRAGE_Deface;
+end
 
 % Check whether filenames or structures have been passed instead 3D double
-if ischar(varargin{1})
+if ischar(varargin{1}) 
     fprintf('Loading file with fieldtrip\n');
     S = ft_read_mri(varargin{1});
     S = ft_volumereslice([],S);
     varargin{1} = S.anatomy;
 elseif isstruct(varargin{1}) && isfield(varargin{1},'anatomy')
-    fprintf('Input is struct: asusming ft (has .anatomy)\n');
+    fprintf('Input is struct: assuming ft (has .anatomy)\n');
     S = ft_volumereslice([],varargin{1});
     varargin{1} = S.anatomy;
 end
@@ -65,7 +71,7 @@ if ischar(varargin{2})
     S = ft_volumereslice([],S);
     varargin{2} = S.anatomy;
 elseif isstruct(varargin{2}) && isfield(varargin{2},'anatomy')
-    fprintf('Input is struct: asusming ft (has .anatomy)\n');
+    fprintf('Input is struct: assuming ft (has .anatomy)\n');
     S = ft_volumereslice([],varargin{2});
     varargin{2} = S.anatomy;
 end
@@ -95,7 +101,7 @@ set(handles.slider5,'Value',0);
 % initialise viewpoints
 if ~isfield(handles,'CurrentView')
     midpoints = 0.5*floor(size(Volume)); % initial views = ~ mid point
-    handles.CurrentView = midpoints;
+    handles.CurrentView = round(midpoints);
 end
 
 % initialise overlay smoothing
